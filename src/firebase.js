@@ -27,11 +27,15 @@ const usersCollection = db.collection('users')
 const postsCollection = db.collection('posts')
 const commentsCollection = db.collection('comments')
 const likesCollection = db.collection('likes')
+const businessesCollection = db.collection('businesses')
+const listingsCollection = db.collection('listings')
 
 // export utils/refs
 export {
   db,
   auth,
+  businessesCollection,
+  listingsCollection,
   usersCollection,
   postsCollection,
   commentsCollection,

@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Dashboard from '../views/Dashboard.vue'
 import Home from '../views/Home.vue';
+import AddBusiness from '../views/AddBusiness.vue';
 import { auth } from '../firebase'
 
 Vue.use(VueRouter)
@@ -10,7 +11,13 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home,
+    component: Home
+  },
+
+  {
+    path: '/add',
+    name: 'AddBusiness',
+    component: AddBusiness
   },
   {
     path: '/login',

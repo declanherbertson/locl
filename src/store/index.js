@@ -6,36 +6,67 @@ import router from '../router/index'
 Vue.use(Vuex)
 
 // realtime firebase
-fb.postsCollection.orderBy('createdOn', 'desc').onSnapshot(snapshot => {
-  let postsArray = []
+// fb.postsCollection.orderBy('createdOn', 'desc').onSnapshot(snapshot => {
+//   let postsArray = []
 
-  snapshot.forEach(doc => {
-    let post = doc.data()
-    post.id = doc.id
+//   snapshot.forEach(doc => {
+//     let post = doc.data()
+//     post.id = doc.id
 
-    postsArray.push(post)
-  })
+//     postsArray.push(post)
+//   })
 
-  store.commit('setPosts', postsArray)
-})
+//   store.commit('setPosts', postsArray)
+// })
 
 const store = new Vuex.Store({
   state: {
     userProfile: {},
-    posts: []
+    posts: [],
+    searchListings: [],
   },
+
   mutations: {
     setUserProfile(state, val) {
       state.userProfile = val
     },
+
     setPerformingRequest(state, val) {
       state.performingRequest = val
     },
+
     setPosts(state, val) {
       state.posts = val
+    },
+
+    setSearchListings(state, val) {
+      state.searchListings = val;
     }
   },
+
   actions: {
+    async addBusiness({ commit }, form) {
+      const businessId = `${form.name}_${form.postalCode}`;
+      await fb.businessesCollection.doc(businessId).set({
+        name: form.name,
+        postalCode: form.postalCode,
+        category: form.category,
+        url: form.url
+      });
+
+      for (let listing of form.listings) {
+        const listingId = `${businessId}_${listing.name}`;
+        await fb.listingsCollection.doc(listingId).set({
+          businessId: businessId,
+          businessName: form.name,
+          name: listing.name || '',
+          description: listing.description || '',
+          price: listing.price || '',
+          url: listing.url || ''
+        });
+      }
+    },
+
     async login({ dispatch }, form) {
       // sign user in
       const { user } = await fb.auth.signInWithEmailAndPassword(form.email, form.password)
@@ -43,6 +74,7 @@ const store = new Vuex.Store({
       // fetch user profile and set in state
       dispatch('fetchUserProfile', user)
     },
+
     async signup({ dispatch }, form) {
       // sign user up
       const { user } = await fb.auth.createUserWithEmailAndPassword(form.email, form.password)
@@ -56,6 +88,7 @@ const store = new Vuex.Store({
       // fetch user profile and set in state
       dispatch('fetchUserProfile', user)
     },
+
     async fetchUserProfile({ commit }, user) {
       // fetch user profile
       const userProfile = await fb.usersCollection.doc(user.uid).get()
@@ -68,6 +101,7 @@ const store = new Vuex.Store({
         router.push('/')
       }
     },
+
     async logout({ commit }) {
       // log user out
       await fb.auth.signOut()
@@ -78,6 +112,7 @@ const store = new Vuex.Store({
       // redirect to login view
       router.push('/login')
     },
+
     async createPost({ state, commit }, post) {
       // create post in firebase
       await fb.postsCollection.add({
@@ -89,6 +124,7 @@ const store = new Vuex.Store({
         likes: 0
       })
     },
+
     async likePost ({ commit }, post) {
       const userId = fb.auth.currentUser.uid
       const docId = `${userId}_${post.id}`
@@ -108,6 +144,7 @@ const store = new Vuex.Store({
         likes: post.likesCount + 1
       })
     },
+
     async updateProfile({ dispatch }, user) {
       const userId = fb.auth.currentUser.uid
       // update user object

@@ -3,9 +3,8 @@
     <PasswordReset v-if="showPasswordReset" @close="togglePasswordReset()"></PasswordReset>
     <section>
       <div class="col1">
-        <h1>Vuegram</h1>
-        <p>Welcome to the <a href="https://savvyapps.com/" target="_blank">Savvy Apps</a> sample social media web app powered by Vue.js and Firebase.
-          Build this project by checking out The Definitive Guide to Getting Started with Vue.js</p>
+        <h1>locl</h1>
+        <p>Welcome to locl.</p>
       </div>
       <div :class="{ 'signup-form': !showLoginForm }" class="col2">
         <form v-if="showLoginForm" @submit.prevent>
@@ -28,7 +27,7 @@
           <h1>Get Started</h1>
           <div>
             <label for="name">Name</label>
-            <input v-model.trim="signupForm.name" type="text" placeholder="Savvy Apps" id="name" />
+            <input v-model.trim="signupForm.name" type="text" placeholder="John Smith" id="name" />
           </div>
           <div>
             <label for="title">Title</label>

@@ -23,7 +23,8 @@ const store = new Vuex.Store({
   state: {
     userProfile: {},
     posts: [],
-    searchListings: [],
+    searchResults: [],
+    zipcode: '',
   },
 
   mutations: {
@@ -39,8 +40,12 @@ const store = new Vuex.Store({
       state.posts = val
     },
 
-    setSearchListings(state, val) {
-      state.searchListings = val;
+    setSearchResults(state, val) {
+      state.searchResults = val;
+    },
+
+    setZipcode(state, val) {
+      state.zipcode = val
     }
   },
 
@@ -95,6 +100,19 @@ const store = new Vuex.Store({
 
       // set user profile in state
       commit('setUserProfile', userProfile.data())
+
+      // change route to dashboard
+      if (router.currentRoute.path === '/login') {
+        router.push('/')
+      }
+    },
+
+    async performSearch({ commit }, {zipcode, search}) {
+      // fetch user profile
+      const listings = await fb.listingsCollection // look up how to query
+
+      // set user profile in state
+      commit('setSearchResults', listings.data())
 
       // change route to dashboard
       if (router.currentRoute.path === '/login') {

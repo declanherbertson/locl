@@ -1,7 +1,12 @@
 // imports
-@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+@import url('https://fonts.googleapis.com/css?family=Open+Sans|Exo:400,700,900');
+
 // colors
-$primary: #30A0EE;
+$primary: #289C67;
+$primary-dark: #005A31;
+$background: #F0FFEB;
+$background-dark: #CDF3C0;
+
 $error: #ef5777;
 $success: #1abc9c;
 $light: #F5F8FA;
@@ -9,11 +14,13 @@ $medium: #657786;
 $dark: #34495E;
 $white: #fff;
 
+
+
 // resets
 body {
 	margin: 0;
 	color: $dark;
-	background: #E6ECF0;
+	background: $background;
 }
 
 html {
@@ -38,6 +45,8 @@ h3,
 h4,
 h5,
 p {
+	font-family: 'Exo';
+	color: $primary;
 	margin: 0 0 0.5rem;
 }
 
@@ -218,6 +227,11 @@ form {
 	opacity: 0;
 }
 
+.error {
+	fill: $error;
+	color: $error;
+}
+
 .margin-5 {
 	margin: 5vh;
 }
@@ -234,6 +248,24 @@ form {
 	margin-top: 0;
 }
 
+.margin-top-3 {
+	margin-top: 3vh;
+}
+
+.margin-top-5 {
+	margin-top: 5vh;
+}
+
+.margin-top-10 {
+	margin-top: 10vh;
+}
+
+.margin-top-20 {
+	margin-top: 20vh;
+}
+
 .margin-bottom-0 {
 	margin-bottom: 0;
 }
+
+

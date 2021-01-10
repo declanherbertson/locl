@@ -73,7 +73,7 @@ const store = new Vuex.Store({
       })
 
       // set user profile in state
-      commit('setSearchResults', listings.data())
+      // commit('setSearchResults', listings.data())
     },
   }
 })

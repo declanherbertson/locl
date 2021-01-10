@@ -6,7 +6,7 @@
         <div v-if="zipcodeLoading" class="loader">
           Loading...
         </div>
-        <div v-else-if="zipcode && !zipcodeInputOn" @click="togglezipcodeInputOn" class="zipcode">
+        <div v-else-if="zipcode && zipcode.length >= 6 && !zipcodeInputOn" @click="togglezipcodeInputOn" class="zipcode">
           {{ zipcode }}
         </div>
         <div v-else>
@@ -14,7 +14,6 @@
             ref="zipcodeInput"
             v-model.trim="zipcode"
             class="zipcodeInput"
-            @blur="togglezipcodeInputOff"
             @keyup.enter="togglezipcodeInputOff"
             placeholder="Enter Postal Code" />
         </div>
@@ -24,6 +23,7 @@
         type="text"
         v-model.trim="search"
         @keyup.enter="attemptSearch"
+        @focus="togglezipcodeInputOff"
         placeholder="Clothing, Books, Baby Supplies..." 
         class="searchInput" />
         <button @click="attemptSearch" class="searchButton"> <Magnify /> </button>
@@ -85,7 +85,9 @@ export default {
 
     async togglezipcodeInputOff () {
       this.zipcodeInputOn = false;
-      this.$store.dispatch('setLocationAction', { zipcode: this.zipcode })
+      if (this.zipcode !== '') {
+        this.$store.dispatch('setLocationAction', { zipcode: this.zipcode })
+      }
     }
   },
 

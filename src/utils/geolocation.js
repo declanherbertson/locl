@@ -1,5 +1,5 @@
 const NodeGeocoder = require('node-geocoder');
-const API_KEY = "AIzaSyDA47uddTQeSv4l57GYdqpGVA3j3MhzB6E";
+const API_KEY = process.env.VUE_APP_GOOGLE_GEO_API_KEY;
 import fetch from 'unfetch';
 
 function instantiateGeo() {
@@ -17,7 +17,7 @@ function reverseGeolocationLookup(position) {
 }
 
 function geolocationLookup(postalCode) {
-  return instantiateGeo().geocode(postalCode);
+  // return instantiateGeo().geocode(postalCode);
 }
 
 export default {

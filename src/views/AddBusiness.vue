@@ -36,6 +36,10 @@
                 <input v-model.trim="listing.price" type="text" placeholder="43.99" />
               </div>
               <div>
+                <label for="tags">Search terms (seperate with commas)</label>
+                <input v-model.trim="listing.tags" type="text" placeholder="chair, black chair, speckled black chair, speckled chair, furniture" />
+              </div>
+              <div>
                 <label for="url">Image URL</label>
                 <input v-model.trim="listing.url" type="text" placeholder="https://google.images/asdfasfafdaf" />
               </div>
@@ -51,8 +55,7 @@
 </template>
 
 <script>
-import PasswordReset from '@/components/PasswordReset'
-
+import geo from '@/utils/geolocation.js';
 export default {
   data() {
     return {
@@ -75,13 +78,22 @@ export default {
 
   methods: {
     async submit () {
+      // get location
+      const location = await geo.geolocationLookup(this.postalCode);
+      // arrayify tags
+      const formListings = this.listings.map((listing) => {
+        const newListing = { ...listing };
+        newListing['tags'] = listing['tags'].split(',').map(tag => tag.trim());
+        return newListing;
+      })
       console.log(JSON.stringify(this.businessForm), JSON.stringify(this.listings));
       await this.$store.dispatch('addBusiness', {
         name: this.businessForm.name || '',
         postalCode: this.businessForm.postalCode || '',
         category: this.businessForm.category || '',
         url: this.businessForm.url || '',
-        listings: this.listings
+        location: location,
+        listings: formListings
       });
       this.clearForm();
     },
@@ -92,7 +104,7 @@ export default {
     },
 
     addListing () {
-      this.listings.push({ id: this.key++, name: '', price: '', url: '', description: '' })
+      this.listings.push({ id: this.key++, name: '', price: '', url: '', description: '', tags: '' })
     },
 
     removeListing (id) {

@@ -1,21 +1,21 @@
 <template>
   <div class="searchBarWrapper">
     <div class="searchBarParent">
-      <div class="locationBar">
+      <div class="zipcodeBar">
         <mapMarker class="mapMarker" />
-        <div v-if="locationLoading" class="loader">
+        <div v-if="zipcodeLoading" class="loader">
           Loading...
         </div>
-        <div v-else-if="location && !locationInputOn" @click="toggleLocationInputOn" class="location">
-          {{ location }}
+        <div v-else-if="zipcode && !zipcodeInputOn" @click="togglezipcodeInputOn" class="zipcode">
+          {{ zipcode }}
         </div>
         <div v-else>
           <input 
-            ref="locationInput"
-            v-model.trim="location"
-            class="locationInput"
-            @blur="toggleLocationInputOff"
-            @keyup.enter="toggleLocationInputOff"
+            ref="zipcodeInput"
+            v-model.trim="zipcode"
+            class="zipcodeInput"
+            @blur="togglezipcodeInputOff"
+            @keyup.enter="togglezipcodeInputOff"
             placeholder="Enter Postal Code" />
         </div>
       </div> 
@@ -29,8 +29,8 @@
         <button @click="attemptSearch" class="searchButton"> <Magnify /> </button>
       </div>
     </div>
-    <p v-if="showNoLocation" class="error">
-      Please enter your location to continue.
+    <p v-if="showNozipcode" class="error">
+      Please enter your zipcode to continue.
     </p>
   </div>
 </template>
@@ -48,15 +48,15 @@ export default {
 
   data() {
     return {
-      showNoLocation: false,
-      locationLoading: false,
-      locationInputOn: false,
+      showNozipcode: false,
+      zipcodeLoading: false,
+      zipcodeInputOn: false,
       search: '',
     }
   },
 
   computed: {
-    location: {
+    zipcode: {
       get () {
         return this.$store.state.zipcode;
       },
@@ -69,37 +69,41 @@ export default {
 
   methods: {
     attemptSearch () {
-      if (!this.location) {
-        this.showNoLocation = true;
+      if (!this.zipcode) {
+        this.showNozipcode = true;
         return;
       }
-      console.log("attempt search for ", this.search, this.location);
+      console.log("attempt search for ", this.search, this.zipcode);
+      this.$store.dispatch('performSearch', { zipcode: this.zipcode, search: this.search })
     },
 
-    async toggleLocationInputOn () {
-      this.locationInputOn = true;
+    async togglezipcodeInputOn () {
+      this.zipcodeInputOn = true;
       await this.$nextTick();
-      this.$refs.locationInput.focus();
+      this.$refs.zipcodeInput.focus();
     },
 
-    async toggleLocationInputOff () {
-      this.locationInputOn = false;
+    async togglezipcodeInputOff () {
+      this.zipcodeInputOn = false;
+      this.$store.dispatch('setLocationAction', { zipcode: this.zipcode })
     }
   },
 
   async mounted () {
     if (navigator.geolocation) {
-      this.locationLoading = true;
+      this.zipcodeLoading = true;
       try {
         const position = await new Promise((res, rej) => {
           navigator.geolocation.getCurrentPosition((position) => res(position), (error) => rej(error));
         });
         const response = await geo.reverseGeolocationLookup(position);
-        this.location = response[0].zipcode.replace(/ /g,'');
-      } catch { 
-        // noop
+        this.zipcode = response[0].zipcode.replace(/ /g,''); // This is for node-geo api
+        console.log(this.zipcode)
+        this.$store.dispatch('setLocationAction', { zipcode: this.zipcode })
+      } catch(e) { 
+          console.log("error", e)
       } finally {
-        this.locationLoading = false;
+        this.zipcodeLoading = false;
       }
     } else {
       console.log("not supported")
@@ -125,19 +129,19 @@ export default {
   width: 40rem;
   display: flex;
 
-  .locationBar {
+  .zipcodeBar {
     background-color: $background-dark;
     border-radius:25px 0 0 25px;
     display: flex;
     align-items: center;
 
-    .locationInput {
+    .zipcodeInput {
       background: none;
       border: none;
       height: 100%
     }
 
-    .location {
+    .zipcode {
       font-size: 14px;
       padding-right: 0.5rem;
     }

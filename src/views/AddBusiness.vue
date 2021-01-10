@@ -8,9 +8,13 @@
             <label for="name">Business Name</label>
             <input v-model.trim="businessForm.name" type="text" placeholder="Benny's Boutique" />
           </div>
+          <!-- <div>
+            <label for="address">Address</label>
+            <input v-model.trim="businessForm.address" type="text" placeholder="4516 West 10th, Vancouver, BC" />
+          </div> -->
           <div>
-            <label for="postalCode">Postal Code</label>
-            <input v-model.trim="businessForm.postalCode" type="text" placeholder="V5R3J1" />
+            <label for="zipcode">Postal Code</label>
+            <input v-model.trim="businessForm.zipcode" type="text" placeholder="V5R3J1" />
           </div>
           <div>
             <label for="category">Category</label>
@@ -62,9 +66,10 @@ export default {
       key: 0,
       businessForm: {
         name: '',
-        postalCode: '',
+        zipcode: '',
         category: '',
         url: '',
+        // address: '',
       },
       listings: [],
     }
@@ -79,7 +84,8 @@ export default {
   methods: {
     async submit () {
       // get location
-      const location = await geo.geolocationLookup(this.postalCode);
+      const location = await geo.geolocationLookup(this.businessForm.zipcode);
+      console.log(location);
       // arrayify tags
       const formListings = this.listings.map((listing) => {
         const newListing = { ...listing };
@@ -89,10 +95,11 @@ export default {
       console.log(JSON.stringify(this.businessForm), JSON.stringify(this.listings));
       await this.$store.dispatch('addBusiness', {
         name: this.businessForm.name || '',
-        postalCode: this.businessForm.postalCode || '',
+        // address: this.businessForm.address || '',
+        zipcode: this.businessForm.zipcode || '',
         category: this.businessForm.category || '',
         url: this.businessForm.url || '',
-        location: location,
+        location: location || '',
         listings: formListings
       });
       this.clearForm();

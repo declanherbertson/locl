@@ -2,29 +2,15 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import * as fb from '../firebase'
 import router from '../router/index'
+import geo from '@/utils/geolocation.js';
 
 Vue.use(Vuex)
 
-// realtime firebase
-// fb.postsCollection.orderBy('createdOn', 'desc').onSnapshot(snapshot => {
-//   let postsArray = []
-
-//   snapshot.forEach(doc => {
-//     let post = doc.data()
-//     post.id = doc.id
-
-//     postsArray.push(post)
-//   })
-
-//   store.commit('setPosts', postsArray)
-// })
-
 const store = new Vuex.Store({
   state: {
-    userProfile: {},
-    posts: [],
     searchResults: [],
     zipcode: '',
+    location: {},
     maxRange: 10
   },
 
@@ -37,17 +23,27 @@ const store = new Vuex.Store({
       state.zipcode = val;
     },
 
+    setLocation(state, val) {
+      state.location = val;
+    },
+
     setMaxRange(state, val) {
       state.maxRange = val;
     }
   },
 
   actions: {
+    async setLocationAction( { commit }, { zipcode }) {
+      const location = await geo.geolocationLookup(zipcode);
+      commit('setLocation', location || {});
+      console.log("set location to", JSON.stringify(location))
+    },
+
     async addBusiness({ commit }, form) {
-      const businessId = `${form.name}_${form.postalCode}`;
+      const businessId = `${form.name}_${form.zipcode}`;
       await fb.businessesCollection.doc(businessId).set({
         name: form.name,
-        postalCode: form.postalCode,
+        zipcode: form.zipcode,
         location: form.location,
         category: form.category,
         url: form.url
@@ -68,20 +64,16 @@ const store = new Vuex.Store({
       }
     },
 
-    async performSearch({ state, commit }, {zipcode, search}) {
+    async performSearch({ state, commit }, { zipcode, search }) {
       // fetch user profile
       const listings = await fb.listingsCollection.where('tags', 'array-contains', search).get();
-
-      // TODO filter by distance
-      console.warn(listings.data());
+      const concreteListings = []
+      listings.forEach(doc => {
+        concreteListings.push(doc.data());
+      })
 
       // set user profile in state
       commit('setSearchResults', listings.data())
-
-      // change route to dashboard
-      if (router.currentRoute.path === '/login') {
-        router.push('/')
-      }
     },
   }
 })

@@ -24,7 +24,7 @@
         v-model.trim="search"
         @keyup.enter="attemptSearch"
         @focus="togglezipcodeInputOff"
-        placeholder="Clothing, Books, Baby Supplies..." 
+        placeholder="Soap, Kitchen Equipment, Gift ideas..." 
         class="searchInput" />
         <button @click="attemptSearch" class="searchButton"> 
           <Magnify v-if="!searching"/> 

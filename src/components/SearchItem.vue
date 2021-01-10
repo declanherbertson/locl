@@ -20,15 +20,22 @@
             <CartOutline />
             <p> Add to Cart </p>
           </button>
+          <button v-else class="removeFromCartBtn" @click="removeFromCart"> 
+            <Close />
+            <p>Remove from Cart</p> 
+          </button>
       </div>
   </div>
 </template>
 
 <script>
 import CartOutline from 'vue-material-design-icons/CartOutline.vue';
+import Close from 'vue-material-design-icons/Close.vue';
+
 export default {
   components: {
-    CartOutline
+    CartOutline,
+    Close
   },
 
   props: {
@@ -58,7 +65,12 @@ export default {
     async addToCart() {
       console.log('add to cart');
       this.$store.commit('updateCart', this.item);
-    }
+    },
+
+    async removeFromCart() {
+      console.log('remove from cart');
+      this.$store.commit('removeCart', this.item);
+    },
   }
 }
 
@@ -93,6 +105,29 @@ export default {
       margin-left: 0.5rem;
     }
     .addToCartBtn {
+      display: flex;
+      align-items: center;
+      &:hover {
+        cursor: pointer;
+      }
+      display: flex;
+      align-items: center;
+      border-radius: 5px;
+      border-color: $background-dark;
+      background-color: $background-dark;
+      border-width: 0px;
+      padding-left: 1rem;
+      padding-right: 1rem;
+      p {
+        margin: 0;
+        margin-left: 0.5rem;
+      }
+      svg {
+        fill: rgba(0,0,0,0.75);
+      }
+    }
+
+    .removeFromCartBtn {
       &:hover {
         cursor: pointer;
       }

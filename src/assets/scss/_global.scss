@@ -6,6 +6,7 @@ $primary: #289C67;
 $primary-dark: #005A31;
 $background: #F0FFEB;
 $background-dark: #CDF3C0;
+$dark-white: #FAFFF9;
 
 $error: #ef5777;
 $success: #1abc9c;
@@ -230,6 +231,10 @@ form {
 .error {
 	fill: $error;
 	color: $error;
+}
+
+.margin-3 {
+	margin: 3vh;
 }
 
 .margin-5 {

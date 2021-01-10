@@ -1,6 +1,6 @@
 <template>
   <div class="searchBarWrapper">
-    <div class="searchBarParent">
+    <div class="searchBarParent" :class="widthClass">
       <div class="zipcodeBar">
         <mapMarker class="mapMarker" />
         <div v-if="zipcodeLoading" class="loader">
@@ -26,7 +26,10 @@
         @focus="togglezipcodeInputOff"
         placeholder="Clothing, Books, Baby Supplies..." 
         class="searchInput" />
-        <button @click="attemptSearch" class="searchButton"> <Magnify /> </button>
+        <button @click="attemptSearch" class="searchButton"> 
+          <Magnify v-if="!searching"/> 
+          <div v-else class="loader"> Searching....</div>
+        </button>
       </div>
     </div>
     <p v-if="showNozipcode" class="error">
@@ -46,12 +49,19 @@ export default {
     Magnify
   },
 
+  props: {
+    widthClass: {
+      default: 'width-large',
+      required: false
+    }
+  },
+
   data() {
     return {
+      searching: false,
       showNozipcode: false,
       zipcodeLoading: false,
-      zipcodeInputOn: false,
-      search: '',
+      zipcodeInputOn: false
     }
   },
 
@@ -64,17 +74,29 @@ export default {
       set (val) {
         this.$store.commit('setZipcode', val);
       }
+    },
+    
+    search: {
+      get () {
+        return this.$store.state.search;
+      },
+
+      set (val) {
+        this.$store.commit('setSearch', val);
+      }
     }
   },
 
   methods: {
-    attemptSearch () {
+    async attemptSearch () {
       if (!this.zipcode) {
         this.showNozipcode = true;
         return;
       }
+      this.searching = true;
       console.log("attempt search for ", this.search, this.zipcode);
-      this.$store.dispatch('performSearch', { zipcode: this.zipcode, search: this.search })
+      await this.$store.dispatch('performSearch', { zipcode: this.zipcode, search: this.search });
+      this.searching = false;
     },
 
     async togglezipcodeInputOn () {
@@ -92,6 +114,9 @@ export default {
   },
 
   async mounted () {
+    if (this.zipcode) {
+      return;
+    }
     if (navigator.geolocation) {
       this.zipcodeLoading = true;
       try {
@@ -128,7 +153,14 @@ export default {
 }
 
 .searchBarParent {
-  width: 40rem;
+  height: 3rem;
+  &.width-med {
+    width: 35rem;
+  }
+
+  &.width-large {
+    width: 40rem;
+  }
   display: flex;
 
   .zipcodeBar {

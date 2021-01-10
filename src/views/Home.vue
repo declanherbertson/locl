@@ -31,7 +31,6 @@ export default {
   h1 { 
     font-weight: bold;
     font-size: 4rem;
-    -webkit-text-stroke: 1px black;
     text-shadow: 0 2px black;
   }
 

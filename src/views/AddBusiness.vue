@@ -84,12 +84,13 @@ export default {
   methods: {
     async submit () {
       // get location
+      this.businessForm.zipcode = this.businessForm.zipcode.replaceAll(' ', '');
       const location = await geo.geolocationLookup(this.businessForm.zipcode);
       console.log(location);
       // arrayify tags
       const formListings = this.listings.map((listing) => {
         const newListing = { ...listing };
-        newListing['tags'] = listing['tags'].split(',').map(tag => tag.trim());
+        newListing['tags'] = listing['tags'].split(',').map(tag => tag.trim().toLowerCase());
         return newListing;
       })
       console.log(JSON.stringify(this.businessForm), JSON.stringify(this.listings));

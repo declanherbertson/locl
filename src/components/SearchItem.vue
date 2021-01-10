@@ -1,6 +1,7 @@
 <template>
   <div class="searchItem">
-      <img src="https://secure.img1-fg.wfcdn.com/im/50455291/compr-r85/6092/60926851/bedwell-dining-table.jpg" />
+      <img v-if="hasUrl" :src="item.url" />
+      <img v-else src="../assets/img/placeholder.png" />
       <div class="searchItemBody">
         <div class="business">
           <span> {{ item.businessName }}</span>
@@ -15,7 +16,7 @@
           <p class="price"> 
             ${{ item.price }} 
           </p>
-          <button @click="addToCart" class="addToCartBtn">
+          <button v-if="!hideAddToCart" @click="addToCart" class="addToCartBtn">
             <CartOutline />
             <p> Add to Cart </p>
           </button>
@@ -35,6 +36,10 @@ export default {
       required: true,
       type: Object
     },
+    hideAddToCart: {
+      required: false,
+      default: false
+    }
   },
 
   data () {
@@ -43,9 +48,16 @@ export default {
     }
   },
 
+  computed: {
+    hasUrl () {
+      return !!this.item.url;
+    }
+  },
+
   methods: {
     async addToCart() {
       console.log('add to cart');
+      this.$store.commit('updateCart', this.item);
     }
   }
 }
@@ -55,6 +67,7 @@ export default {
 <style scope lang="scss">
 @import '../assets/scss/_global.scss';
 .searchItem {
+  padding: 1rem;
   margin-bottom: 1rem;
   box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.5);
   display: flex;
@@ -80,6 +93,9 @@ export default {
       margin-left: 0.5rem;
     }
     .addToCartBtn {
+      &:hover {
+        cursor: pointer;
+      }
       display: flex;
       align-items: center;
       border-radius: 5px;

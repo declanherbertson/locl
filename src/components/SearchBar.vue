@@ -72,6 +72,7 @@ export default {
       },
 
       set (val) {
+        this.showNozipcode = false;
         this.$store.commit('setZipcode', val);
       }
     },

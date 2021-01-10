@@ -11,12 +11,20 @@ const store = new Vuex.Store({
     searchResults: [],
     zipcode: '',
     location: {},
-    maxRange: 25,
     search: '',
     lastSearch: '',
+    cart: []
   },
 
   mutations: {
+    updateCart(state, val) {
+      state.cart.push(val);
+    },
+
+    removeCart(state, val) {
+      state.cart.splice(state.cart.indexOf(val), 1);
+    },
+
     setSearchResults(state, val) {
       state.searchResults = val;
     },
@@ -75,7 +83,8 @@ const store = new Vuex.Store({
     },
 
     async performSearch({ state, commit }) {
-      const listings = await fb.listingsCollection.where('tags', 'array-contains', state.search).get();
+      const searchTerms = [state.search.toLowerCase(), ...state.search.split(" ").map(a => a.toLowerCase())]
+      const listings = await fb.listingsCollection.where('tags', 'array-contains-any', searchTerms).get();
       let concreteListings = []
       listings.forEach(doc => {
         concreteListings.push(doc.data());
@@ -89,11 +98,13 @@ const store = new Vuex.Store({
       concreteListings = concreteListings.map((listing) => {
         const newListing = { ...listing };
         let dist = geo.distance(userLat, userLng, listing.location.lat, listing.location.lng);
-        dist = String(Math.round(dist * 10) / 10);
+        dist = Math.round(dist * 10) / 10;
         console.log('dist', dist);
         newListing['distance'] = dist;
         return newListing;
-      })
+      });
+
+      concreteListings = concreteListings.sort((a, b) => a.distance > b.distance ? 1 : -1);
 
       commit('setSearchResults', concreteListings);
       commit('setLastSearch', state.search);

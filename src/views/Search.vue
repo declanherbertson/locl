@@ -1,7 +1,7 @@
 <template>
   <div id="search">
     <div class="header">
-      <a href="/"> <h1 class="margin-top-3">locl.</h1> </a>
+      <router-link to="/"> <h1 class="margin-top-3">locl.</h1> </router-link>
       <SearchBar class="margin-top-3" widthClass="width-med" />
       <CartHeader class="margin-top-3" />
     </div>
@@ -10,9 +10,9 @@
         <div class="searchResultHeader">
           <p class="resultsSummary">{{ resultsSummary }}</p>
         </div>  
-        <template v-if="hasResults">
+        <div class="searchResultsList" v-if="hasResults">
           <SearchItem v-for="result of searchResults" :key="result.uid" :item="result" />
-        </template>
+        </div>
         <template v-else>
           No results found
         </template>
@@ -88,6 +88,7 @@ export default {
     .searchResults {
       margin: 1vh;
       width: 100%;
+      overflow-y: scroll;
 
       .searchResultHeader {
         display: flex;

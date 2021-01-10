@@ -1,9 +1,9 @@
 <template>
   <div id="cartHeader">
-    <a href="/cart">
+    <router-link to="/cart">
       <CartOutline />
-      <p>Cart (0)</p>
-    </a>
+      <p>Cart ({{numCart}})</p>
+    </router-link>
   </div>
 </template>
 
@@ -14,6 +14,12 @@ export default {
   components: {
     CartOutline,
   },
+
+  computed: {
+    numCart () {
+      return this.$store.state.cart.length;
+    }
+  }
 }
 
 </script>

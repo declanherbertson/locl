@@ -72,11 +72,11 @@ export default {
     },
 
     subtotal () {
-      return this.cartItems.map(i => i.price).reduce((acc, curr) => acc + Number(curr), 0);
+      return Math.round(this.cartItems.map(i => i.price).reduce((acc, curr) => acc + Number(curr), 0) * 100) / 100;
     },
 
     shipping () {
-      return this.subtotal * 0.1;
+      return Math.round(this.subtotal * 0.1 * 100) / 100;
     },
 
     taxes () {
